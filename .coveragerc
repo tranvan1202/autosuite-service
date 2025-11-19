@@ -1,0 +1,16 @@
+[run]
+source =
+    engine
+    apps
+    web
+
+omit =
+    */tests/*
+    */secrets/*
+    engine/utils/unused/*
+    scripts/*
+    */__init__.py
+
+[report]
+show_missing = true
+skip_covered = true

@@ -1,0 +1,37 @@
+<!-- #root/service/app/templates/pages/job_detail.html -->
+{% extends "layouts/base.html" %}
+{% block content %}
+<div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+    <h2 class="mb-0">Job <code>{{ job.id }}</code></h2><br>
+    <span class="badge bg-primary">Flow: {{ job.flow_type }}</span><br>
+</div>
+<div class="mb-3 small text-muted" id="job-meta" data-state="{{ job.status }}">
+    <span class="me-3">Created: <b>{{ job.created_at|format_tz }}</b></span>
+    <span class="me-3">Finished: <b>{{ job.finished_at|format_tz }}</b></span>
+
+    <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+        <span class="badge bg-success me-1">Done {{ counts.done }}</span>
+        <span class="badge bg-danger me-1">Failed {{ counts.failed }}</span>
+        <span class="badge bg-secondary">Cancelled {{ counts.cancelled }}</span>
+
+        <a class="btn btn-sm btn-outline-secondary"
+           href="/api/v1/jobs/{{ job.id }}/export.xlsx">
+            Export Excel
+        </a>
+
+        {% if job.status == 'RUNNING' %}
+        {% include "components/job_controls_stop.html" %}
+        {% endif %}
+    </div>
+
+</div>
+
+<div id="items_host"
+     hx-get="/jobs/{{ job.id }}/items"
+     hx-trigger="load{% if job.status == 'RUNNING' %}, every {{ poll_ms }}ms{% endif %}"
+     hx-target="#items_host"
+     hx-swap="outerHTML">
+    <div class="text-muted">Loading…</div>
+</div>
+
+{% endblock %}

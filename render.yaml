@@ -1,0 +1,25 @@
+#root/render.yaml
+# Why: single file to deploy FREE now and upgrade later by flipping plan/env.
+
+services:
+  - type: web
+    name: autosuite-service
+    env: docker
+    plan: free             # change to 'starter'/'standard' (paid) later
+    autoDeploy: true
+    healthCheckPath: /api/v1/healthz
+    envVars:
+      - key: AUTOSUITE_API_KEY_ENABLED
+        value: "false"     # FREE pilot: keep API open (or set true + key)
+      - key: AUTOSUITE_ITEM_MAX_RETRIES
+        value: "2"
+      - key: AUTOSUITE_DRIVER
+        value: "playwright"
+      - key: AUTOSUITE_PW_HEADLESS
+        value: "1"
+      - key: AUTOSUITE_PW_TRACING
+        value: "off"
+      - key: AUTOSUITE_PW_VIDEO
+        value: "off"
+      - key: AUTOSUITE_METRICS_ENABLED
+        value: "true"

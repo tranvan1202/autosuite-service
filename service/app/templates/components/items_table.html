@@ -1,0 +1,36 @@
+<!-- #root/service/app/templates/components/items_table.html -->
+<div id="items_host">
+    <div class="table-responsive table-scroll">
+        <table class="table table-bordered table-sm bg-white">
+            <thead class="table-light sticky-thead">
+            <tr>
+                {% for c in columns %}<th scope="col">{{ c }}</th>{% endfor %}
+            </tr>
+            </thead>
+            <tbody>
+            {% for r in rows %}
+            <tr>
+                {% for c in columns %}
+                <td>{% include "components/dynamic_cell.html" with context %}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+            {% if not rows %}
+            <tr><td colspan="{{ columns|length }}"><span class="muted">No items yet…</span></td></tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    (function(){
+        const meta = document.getElementById('job-meta');
+        if (!meta) return;
+        const running = meta.dataset.state === 'RUNNING';
+        const host = document.getElementById('items_host');
+        if (!running && host) {
+            host.removeAttribute('hx-trigger'); // turn off polling after DONE/FAILED/CANCELLED
+        }
+    })();
+</script>

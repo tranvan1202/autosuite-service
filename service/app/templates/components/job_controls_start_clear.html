@@ -1,0 +1,13 @@
+<!-- #root/service/app/templates/components/job_controls_start_clear.html -->
+<div class="d-flex gap-2 mt-2">
+    <button class="btn btn-primary" type="button" id="btn-start" onclick="(async () => {
+    if (typeof buildPayload !== 'function') { alert('buildPayload() not found'); return; }
+    const payload = buildPayload();
+    const data = await postJob(payload, 'btn-start');
+    if (data) window.location.href = `/jobs/${data.job_id}`;
+  })();">Start</button>
+
+    <button class="btn btn-outline-secondary" type="button" id="btn-clear" onclick="(function(){
+    const f = this.closest('form'); if (f) f.reset();
+  }).call(this)">Clear</button>
+</div>

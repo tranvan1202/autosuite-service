@@ -1,0 +1,34 @@
+<!-- #root/service/app/templates/components/dynamic_cell.html -->
+{% set v = r.get(c) %}
+
+{# Simple scalar cells. #}
+{% if v is string or v is number %}
+<span class="cell-text">{{ v }}</span>
+
+{# Nested structures: use shared nested_number_lines filter. #}
+{% elif v is mapping or (v is sequence and v is not string) %}
+{% set lines = v | nested_number_lines %}
+{% if lines %}
+<ul class="list-unstyled mb-0">
+    {%- for line in lines %}
+    {%- set parts = line.split(' ', 1) %}
+    {%- set number = parts[0] %}
+    {%- set text = parts[1] if parts|length > 1 else '' %}
+    <li>
+        <span class="number-bullet">{{ number }}</span>
+        {{ text }}
+    </li>
+    {%- endfor %}
+</ul>
+{% else %}
+<span class="muted">—</span>
+{% endif %}
+
+{# Missing / null value. #}
+{% elif v is none %}
+<span class="muted">—</span>
+
+{# Fallback: stringify unknown types. #}
+{% else %}
+<span class="cell-text">{{ v }}</span>
+{% endif %}

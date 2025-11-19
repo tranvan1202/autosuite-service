@@ -1,0 +1,94 @@
+# =====================================
+# Python + FastAPI + Playwright + IntelliJ Project
+# =====================================
+
+# --- IDE / Editor metadata
+.idea/
+.vscode/
+*.iml
+
+# --- Virtual environments
+.venv/
+env/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.cache/
+pytest_cache/
+
+# --- Unit test / coverage
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+.nox/
+
+# --- Coverage / Test reports
+test-results/
+playwright-report/
+trace.zip
+*.har
+*.webm
+screenshots/
+videos/
+var/artifacts/
+var/reports/
+var/test_dbs/
+
+# --- Build / Packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+MANIFEST
+*.spec
+
+# --- Local databases / data
+data.db
+*.sqlite
+*.sqlite3
+*.db
+dev.db
+
+# --- Logs / temp / runtime artifacts
+*.log
+logs/
+tmp/
+temp/
+*.pid
+
+# --- Environment files
+.env
+.env.local
+.env.dev
+.env.prod
+.env.example
+!.env.example
+
+# --- Docker / Render build artifacts
+*.bak
+*.old
+Dockerfile.old
+__docker_cache__/
+*.tar
+*.tgz
+
+
+# --- Node/npm leftovers (if frontend later)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- OS-specific
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Secrets
+secrets/
+scripts/test_scripts/
