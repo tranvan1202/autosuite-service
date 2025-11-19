@@ -1,0 +1,63 @@
+/* root/service/app/static/style.css
+   Purpose: shared styling for tables, text formatting,
+            and layout helpers (extracted from base.html) */
+
+/* ---- Text helpers ---- */
+.muted {
+    color: #6c757d;
+}
+
+.ok {
+    color: #198754;
+}
+
+.fail {
+    color: #dc3545;
+}
+
+.number-bullet {
+    font-weight: 600;
+    margin-right: 0.25rem;
+}
+
+/* ---- Table formatting ---- */
+
+/* Grid lines */
+table.table th,
+table.table td {
+    border: 1px solid #dee2e6 !important;
+}
+
+/* Readability + wrapping rules */
+.cell-text {
+    white-space: normal;
+    word-break: break-word;
+}
+
+/* Allow horizontal scrolling for large tables */
+.table-scroll {
+    max-height: 60vh;
+    overflow: auto;
+}
+
+/* Sticky header for long lists */
+.sticky-thead th {
+    position: sticky;
+    top: 0;
+    background: #f8f9fa;
+    z-index: 2;
+}
+
+/* Column sizing constraints */
+table.table th,
+table.table td {
+    min-width: 120px;
+    max-width: 360px;
+    white-space: normal;
+    word-break: break-word;
+}
+
+.col-narrow {
+    min-width: 80px;
+    max-width: 140px;
+}

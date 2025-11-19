@@ -1,0 +1,22 @@
+<!-- #root/service/app/templates/components/job_controls_stop.html -->
+<button class="btn btn-sm btn-danger"
+        id="btn-stop"
+        data-job-id="{{ job.id if job else '' }}"
+        onclick="(async () => {
+  const b = document.getElementById('btn-stop');
+  const id = b.dataset.jobId || (b.getAttribute('data-job-id') || '').trim();
+  if (!id) { alert('Missing job id'); return; }
+  b.disabled = true;
+  try {
+    const r = await fetch(`/api/v1/jobs/${id}/cancel`, { method: 'POST' });
+    if (!r.ok) { alert('Cancel failed: ' + r.statusText); return; }
+    // Nếu đang ở job detail: refresh phần items ngay
+    if (window.location.pathname === `/jobs/${id}`) {
+      const host = document.getElementById('items_host');
+      if (host) host.removeAttribute('hx-trigger'); // tắt poll
+      location.reload();
+    }
+  } finally {
+    b.disabled = false;
+  }
+})();">Stop</button>

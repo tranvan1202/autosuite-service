@@ -1,0 +1,28 @@
+<!-- #root/service/app/templates/forms/flow_sauce_demo.html -->
+<form id="form-sauce" class="vstack gap-2">
+    <div><label class="form-label">First name</label><input class="form-control" name="first_name" required></div>
+    <div><label class="form-label">Last name</label><input class="form-control" name="last_name" required></div>
+    <div><label class="form-label">Postal code</label><input class="form-control" name="postal_code" required></div>
+    <div><label class="form-label">Product names (comma-separated)</label>
+        <input class="form-control" name="product_names" placeholder="Sauce Labs Backpack, Sauce Labs Bike Light" required></div>
+
+    <script>
+        function buildPayload() {
+            const fd = new FormData(document.getElementById('form-sauce'));
+            const products = String(fd.get('product_names')||'')
+                .split(',').map(s=>s.trim()).filter(Boolean);
+            return {
+                flow_type: "FLOW_SAUCE_DEMO",
+                items: [{
+                    first_name: String(fd.get('first_name')||'').trim(),
+                    last_name: String(fd.get('last_name')||'').trim(),
+                    postal_code: String(fd.get('postal_code')||'').trim(),
+                    product_names: products, meta: {}
+                }],
+                options: { dedupe: true }
+            };
+        }
+    </script>
+
+    {% include "components/job_controls_start_clear.html" %}
+</form>

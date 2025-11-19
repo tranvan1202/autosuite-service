@@ -1,0 +1,22 @@
+<!-- #root/service/app/templates/forms/crawl_simple.html -->
+<form id="form-crawl" class="vstack gap-2">
+    <div>
+        <label class="form-label">URLs (one per line)</label>
+        <textarea class="form-control" name="urls" rows="6" placeholder="https://example.com" required></textarea>
+    </div>
+
+    <script>
+        function buildPayload() {
+            const fd = new FormData(document.getElementById('form-crawl'));
+            const urls = String(fd.get('urls')||'')
+                .split('\n').map(s=>s.trim()).filter(Boolean);
+            return {
+                flow_type: "CRAWL_SIMPLE",
+                items: urls.map(u => ({ url: u, meta: {} })),
+                options: { dedupe: true }
+            };
+        }
+    </script>
+
+    {% include "components/job_controls_start_clear.html" %}
+</form>

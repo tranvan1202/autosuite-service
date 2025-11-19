@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: [dev, main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  pull_request:
+    branches: [dev, main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+  schedule:
+    - cron: "0 19 * * *"  # 19:00 UTC = 02:00 VNT
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-test:
+    name: Lint, Type Check & Test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      AUTOSUITE_API_KEY_ENABLED: "false"
+      AUTOSUITE_API_KEY: "ci-secret"
+      AUTOSUITE_DB_URL: "sqlite:///./var/app_ci.db"
+
+      AUTOSUITE_DRIVER: "playwright"
+      AUTOSUITE_ITEM_MAX_RETRIES: "2"
+
+      AUTOSUITE_PW_HEADLESS: "1"
+      AUTOSUITE_PW_TRACING: "off"
+      AUTOSUITE_PW_VIDEO: "off"
+
+      AUTOSUITE_MAX_ITEMS_PER_JOB: "100"
+      AUTOSUITE_PAGE_SIZE_DEFAULT: "50"
+      AUTOSUITE_PAGE_SIZE_MAX: "100"
+      AUTOSUITE_PAYLOAD_MAX_BYTES: "262144"
+      AUTOSUITE_UI_POLL_MS: "500"
+
+      AUTOSUITE_METRICS_ENABLED: "true"
+      AUTOSUITE_DISPLAY_TZ: "Asia/Ho_Chi_Minh"
+
+      AUTOSUITE_ARTIFACTS_DIR: "./var/artifacts"
+      AUTOSUITE_REPORTS_DIR: "./var/reports"
+      AUTOSUITE_ARTIFACTS_TTL_DAYS: "7"
+
+      AUTOSUITE_EXECUTOR_MAX_WORKERS: "1"
+
+      SAUCEDEMO_USERNAME: "standard_user"
+      SAUCEDEMO_PW: "secret_sauce"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Create var folders
+        run: |
+          mkdir -p var/artifacts var/reports var/test_dbs
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt', 'dev-requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Cache Ruff
+        uses: actions/cache@v4
+        with:
+          path: .ruff_cache
+          key: ${{ runner.os }}-ruff-${{ hashFiles('pyproject.toml') }}
+          restore-keys: ${{ runner.os }}-ruff-
+
+      - name: Cache Mypy
+        uses: actions/cache@v4
+        with:
+          path: .mypy_cache
+          key: ${{ runner.os }}-mypy-${{ hashFiles('pyproject.toml') }}
+          restore-keys: ${{ runner.os }}-mypy-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r dev-requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Ruff lint
+        run: ruff check . --output-format=github
+
+      - name: Black format check
+        run: black --check .
+
+      - name: Type check (mypy)
+        run: |
+          mypy engine service
+
+      - name: Run tests + coverage
+        run: |
+          pytest -s -v \
+            --junitxml=var/reports/junit.xml \
+            --html=var/reports/report.html --self-contained-html \
+            --cov=service --cov=engine \
+            --cov-report=xml:var/reports/coverage.xml \
+            --cov-report=term-missing
+
+      - name: Upload reports (JUnit, HTML, Coverage, Traces)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-artifacts
+          path: |
+            var/reports/**
+            var/artifacts/**

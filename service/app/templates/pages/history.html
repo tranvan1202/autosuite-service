@@ -1,0 +1,54 @@
+<!-- #root/service/app/templates/pages/history.html -->
+{% extends "layouts/base.html" %}
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>Job History</span>
+        <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-outline-primary" onclick="loadHistory()">Reload</button>
+        </div>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive table-scroll">
+            <table class="table table-sm table-hover mb-0" id="historyTable">
+                <thead class="table-light sticky-thead">
+                <tr>
+                    <th style="width:80px">#</th>
+                    <th>Flow</th>
+                    <th>Job ID</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Finished</th>
+                </tr>
+                </thead>
+                <tbody id="historyBody">
+                <tr class="text-center"><td colspan="6">Click Reload…</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    async function loadHistory() {
+        const res = await fetch('/api/v1/history?limit=50&page=1');
+        if (!res.ok) { alert('Failed: ' + res.statusText); return; }
+        const rows = await res.json();
+        const tbody = document.getElementById('historyBody');
+        if (!rows.length) {
+            tbody.innerHTML = `<tr class="text-center"><td colspan="6">No data</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = rows.map((r,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td>${r.flow_type}</td>
+      <td><a href="/jobs/${r.id}">${r.id}</a></td>
+      <td>${r.status}</td>
+      <td>${r.created_at}</td>
+      <td>${r.finished_at}</td>
+    </tr>`).join('');
+    }
+
+    loadHistory();
+</script>
+{% endblock %}

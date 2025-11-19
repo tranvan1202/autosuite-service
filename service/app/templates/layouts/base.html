@@ -1,0 +1,58 @@
+<!-- #root/service/app/templates/layouts/base.html -->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>{{ title or "AutoSuite Service" }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">AutoSuite Service</a>
+        <div class="navbar-nav">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/history">History</a>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    async function postJob(payload, btnId) {
+        const btn = btnId ? document.getElementById(btnId) : null;
+        if (btn) btn.disabled = true;
+        try {
+            const r = await fetch("/api/v1/jobs", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+            if (!r.ok) {
+                let msg = r.status + " " + r.statusText;
+                try {
+                    const e = await r.json();
+                    // Ưu tiên hiển thị "CODE: message"
+                    if (e?.detail?.errors && Array.isArray(e.detail.errors)) {
+                        msg = e.detail.errors.map(x => `${x.code}: ${x.message}`).join("; ");
+                    } else if (e?.detail) {
+                        msg = typeof e.detail === "string" ? e.detail : JSON.stringify(e.detail);
+                    }
+                } catch {}
+                alert("Failed to start job: " + msg);
+                return null;
+            }
+            return await r.json();
+        } finally {
+            if (btn) btn.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>

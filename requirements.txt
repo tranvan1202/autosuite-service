@@ -1,0 +1,53 @@
+# Web framework (API + service)
+fastapi==0.120.3
+# ASGI server for local/dev; avoid [standard] to skip C deps on Windows/CI
+uvicorn==0.38.0
+
+# Resilience utilities (retries/backoff at utils/hook level)
+tenacity==9.1.2
+
+# ORM (optional persistence, simple and portable)
+SQLAlchemy==2.0.44
+
+# Data validation / models (v2, fast and typed)
+pydantic==2.12.3
+# Load typed settings from environment (ENV-first)
+pydantic-settings==2.11.0
+
+# Lightweight HTTP client (runtime utils: http_probe)
+httpx==0.28.1
+
+# Browser automation (default driver, later add Selenium/Cypress)
+playwright==1.55.0
+
+# Structured logging (JSON-ready for CI logs)
+structlog==25.5.0
+# Ultra-fast JSON (response serialization if needed)
+orjson==3.11.4
+# .env loader for local/dev convenience
+python-dotenv==1.1.1
+
+# Compression utilities (artifacts/reports handling)
+zstandard==0.25.0
+
+# Server-side templating for minimal UI (HTMX + Jinja2)
+jinja2>=3.1
+# Excel reporting (phase 2 exporters)
+XlsxWriter>=3.2
+# Form parsing (HTMX form posts)
+python-multipart>=0.0.9
+
+# JSON schema validation (output/input schema checks)
+jsonschema>=4.23
+# HTML parsing helpers for metadata extraction
+beautifulsoup4>=4.12
+# Fast HTML/XML parser backend
+lxml>=5.3
+
+# Async file IO (serving/download artifacts if needed)
+aiofiles>=23.2
+# Prometheus metrics endpoint
+prometheus-client>=0.20
+
+# Timezone data:
+tzdata

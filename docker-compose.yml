@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  autosuite-service:
+    build: .
+    container_name: autosuite-service
+    ports:
+      - "8000:8000"
+    environment:
+      AUTOSUITE_API_KEY_ENABLED: "false"
+      AUTOSUITE_DB_URL: "sqlite:///./var/app.db"
+      AUTOSUITE_EXECUTOR_MAX_WORKERS: "1"
+    volumes:
+      - ./var:/app/var
